@@ -13,7 +13,7 @@ public class Film {
     private Integer id;
     @NotEmpty(message = "Название не может быть пустым")
     private String name;
-    @Size(max=200, message = "Максимальная длина описания — 200 символов")
+    @Size(max = 200, message = "Максимальная длина описания — 200 символов")
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
