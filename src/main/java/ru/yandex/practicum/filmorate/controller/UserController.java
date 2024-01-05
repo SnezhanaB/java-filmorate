@@ -29,7 +29,7 @@ public class UserController {
             log.debug("Ошибка валидации 'Дата рождения не может быть в будущем'. " + user);
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
-        if(user.getName() == null || user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         int id = users.size() + 1;
@@ -48,7 +48,7 @@ public class UserController {
             log.debug("Пользователь не найден! " + user);
             throw new NotFoundException("Пользователь не найден!");
         }
-        if(user.getName() == null || user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
