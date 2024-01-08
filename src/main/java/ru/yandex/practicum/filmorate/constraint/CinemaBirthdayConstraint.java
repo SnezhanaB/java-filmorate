@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy=CinemaBirthdayConstraintValidator.class)
+@Constraint(validatedBy = CinemaBirthdayConstraintValidator.class)
 public @interface CinemaBirthdayConstraint {
     String message() default "Дата релиза не может быть раньше дня рождения кино";
     Class<?>[] groups() default {};
