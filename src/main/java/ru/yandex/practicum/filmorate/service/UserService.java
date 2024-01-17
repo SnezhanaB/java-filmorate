@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,4 +55,29 @@ public class UserService {
         return updated;
     }
 
+    public void addFriend(int userId, int friendId) throws NotFoundException {
+        User user = getUserById(userId);
+        User friend = getUserById(friendId);
+        user.addFriend(friendId);
+        friend.addFriend(userId);
+    }
+
+    public void removeFriend(int userId, int friendId) throws NotFoundException {
+        User user = getUserById(userId);
+        User friend = getUserById(friendId);
+        user.removeFriend(friendId);
+        friend.removeFriend(userId);
+    }
+
+    public List<User> getFriends(int userId) throws NotFoundException {
+        User user = getUserById(userId);
+        return user.getFriends().stream().map(this::getUserById).collect(Collectors.toList());
+    }
+
+    public List<User> getCommonFriends(int userId, int otherId) throws NotFoundException {
+        User user = getUserById(userId);
+        User other = getUserById(otherId);
+        List<Integer> commonFriendIds = user.getFriends().stream().filter((id) -> other.getFriends().contains(id)).collect(Collectors.toList());
+        return commonFriendIds.stream().map(this::getUserById).collect(Collectors.toList());
+    }
 }
