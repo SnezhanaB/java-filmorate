@@ -21,28 +21,40 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    /**
+     * `GET /films` — получить все фильмы
+     * */
     @GetMapping()
     public List<Film> findAll() {
         return new ArrayList<>(filmService.findAll());
     }
 
+    /**
+     * `POST /films` — добавить новый фильм
+     * */
     @PostMapping()
     public Film create(@Valid @RequestBody Film film) {
         return filmService.create(film);
     }
 
+    /**
+     * `PUT /films` — обновить фильм
+     * */
     @PutMapping()
     public Film update(@Valid @RequestBody Film film) throws NotFoundException {
         return filmService.update(film);
     }
 
+    /**
+     * `GET /films/{filmId}` — получить фильм по id
+     * */
     @GetMapping("/{filmId}")
     public Film getFilmById(@PathVariable("filmId") Integer filmId) throws NotFoundException {
         return filmService.getFilmById(filmId);
     }
 
     /**
-     * `PUT /films/{id}/like/{userId}` — пользователь ставит лайк фильму.
+     * `PUT /films/{id}/like/{userId}` — пользователь ставит лайк фильму
      * */
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
@@ -50,7 +62,7 @@ public class FilmController {
     }
 
     /**
-     * `DELETE /films/{id}/like/{userId}` — пользователь удаляет лайк.
+     * `DELETE /films/{id}/like/{userId}` — пользователь удаляет лайк
      * */
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable("id") Integer id, @PathVariable("userId") Integer userId) {
@@ -58,7 +70,8 @@ public class FilmController {
     }
 
     /**
-     * `GET /films/popular?count={count}` — возвращает список из первых `count` фильмов по количеству лайков.
+     * `GET /films/popular?count={count}` — возвращает список из первых `count` фильмов,
+     * отсортированных по количеству лайков
      */
     @GetMapping("/popular")
     public List<Film> getPopular(@Positive @RequestParam(name = "count", defaultValue = "10", required = false) Integer count) {

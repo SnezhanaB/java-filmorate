@@ -24,6 +24,9 @@ public class UserController {
         this.userService = userService;
     }
 
+    /**
+     * Получить всех пользователей
+     */
     @GetMapping()
     public List<User> findAll() {
         return new ArrayList<>(userService.findAll());

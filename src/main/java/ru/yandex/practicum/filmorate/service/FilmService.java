@@ -25,10 +25,16 @@ public class FilmService {
         this.userStorage = userStorage;
     }
 
+    /**
+     * Получить все фильмы
+     * */
     public Collection<Film> findAll() {
         return filmStorage.getAll();
     }
 
+    /**
+     * Получить фильм по id
+     * */
     public Film getFilmById(int filmId) throws NotFoundException {
         Film founded = filmStorage.getById(filmId);
         if (founded == null) {
@@ -39,10 +45,16 @@ public class FilmService {
         return founded;
     }
 
+    /**
+     * Добавить новый фильм
+     * */
     public Film create(Film film) {
         return filmStorage.create(film);
     }
 
+    /**
+     * Обновить фильм
+     * */
     public Film update(Film film) throws NotFoundException {
         Film updated = filmStorage.update(film);
         if (updated == null) {
@@ -53,10 +65,13 @@ public class FilmService {
         return updated;
     }
 
-    public void addLike(Integer id, Integer userId) throws NotFoundException {
-        Film film = filmStorage.getById(id);
+    /**
+     * Пользователь ставит лайк фильму
+     * */
+    public void addLike(Integer filmId, Integer userId) throws NotFoundException {
+        Film film = filmStorage.getById(filmId);
         if (film == null) {
-            String msg = String.format("Фильм с id=%s не найден!", id);
+            String msg = String.format("Фильм с id=%s не найден!", filmId);
             log.debug(msg);
             throw new NotFoundException(msg);
         }
@@ -70,10 +85,13 @@ public class FilmService {
         filmStorage.update(film);
     }
 
-    public void removeLike(Integer id, Integer userId) throws NotFoundException {
-        Film film = filmStorage.getById(id);
+    /**
+     * Пользователь удаляет лайк
+     * */
+    public void removeLike(Integer filmId, Integer userId) throws NotFoundException {
+        Film film = filmStorage.getById(filmId);
         if (film == null) {
-            String msg = String.format("Фильм с id=%s не найден!", id);
+            String msg = String.format("Фильм с id=%s не найден!", filmId);
             log.debug(msg);
             throw new NotFoundException(msg);
         }
@@ -87,6 +105,9 @@ public class FilmService {
         filmStorage.update(film);
     }
 
+    /**
+     * Возвращает список из первых `count` фильмов, отсортированных по количеству лайков
+     */
     public List<Film> getPopular(Integer count) {
         return filmStorage.getAll().stream()
                 .sorted((film1, film2) -> film2.getRate() - film1.getRate())

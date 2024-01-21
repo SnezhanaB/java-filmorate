@@ -20,10 +20,16 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    /**
+     * Получить всех пользователей
+     */
     public Collection<User> findAll() {
         return userStorage.getAll();
     }
 
+    /**
+     * Получить пользователя по id
+     */
     public User getUserById(int userId) throws NotFoundException {
         User founded = userStorage.getById(userId);
         if (founded == null) {
@@ -34,6 +40,9 @@ public class UserService {
         return founded;
     }
 
+    /**
+     * Создать пользователя
+     */
     public User create(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -41,6 +50,9 @@ public class UserService {
         return userStorage.create(user);
     }
 
+    /**
+     * Обновить пользователя
+     */
     public User update(User user) throws NotFoundException {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
@@ -55,6 +67,9 @@ public class UserService {
         return updated;
     }
 
+    /**
+     * Добавить в список друзей
+     */
     public void addFriend(int userId, int friendId) throws NotFoundException {
         User user = getUserById(userId);
         User friend = getUserById(friendId);
@@ -62,6 +77,9 @@ public class UserService {
         friend.addFriend(userId);
     }
 
+    /**
+     * Удалить из списка друзей
+     */
     public void removeFriend(int userId, int friendId) throws NotFoundException {
         User user = getUserById(userId);
         User friend = getUserById(friendId);
@@ -69,15 +87,27 @@ public class UserService {
         friend.removeFriend(userId);
     }
 
+    /**
+     * Получить список друзей
+     */
     public List<User> getFriends(int userId) throws NotFoundException {
         User user = getUserById(userId);
-        return user.getFriends().stream().map(this::getUserById).collect(Collectors.toList());
+        return user.getFriends().stream()
+                .map(this::getUserById)
+                .collect(Collectors.toList());
     }
 
+    /**
+     * Получить список друзей, общих с другим пользователем
+     */
     public List<User> getCommonFriends(int userId, int otherId) throws NotFoundException {
         User user = getUserById(userId);
         User other = getUserById(otherId);
-        List<Integer> commonFriendIds = user.getFriends().stream().filter((id) -> other.getFriends().contains(id)).collect(Collectors.toList());
-        return commonFriendIds.stream().map(this::getUserById).collect(Collectors.toList());
+        List<Integer> commonFriendIds = user.getFriends().stream()
+                .filter((id) -> other.getFriends().contains(id))
+                .collect(Collectors.toList());
+        return commonFriendIds.stream()
+                .map(this::getUserById)
+                .collect(Collectors.toList());
     }
 }
