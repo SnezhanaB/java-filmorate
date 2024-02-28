@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,21 +22,22 @@ public class FilmService {
     private UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Autowired @Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }
 
     /**
      * Получить все фильмы
-     * */
+     */
     public Collection<Film> findAll() {
         return filmStorage.getAll();
     }
 
     /**
      * Получить фильм по id
-     * */
+     */
     public Film getFilmById(int filmId) throws NotFoundException {
         Film founded = filmStorage.getById(filmId);
         if (founded == null) {
@@ -47,14 +50,14 @@ public class FilmService {
 
     /**
      * Добавить новый фильм
-     * */
+     */
     public Film create(Film film) {
         return filmStorage.create(film);
     }
 
     /**
      * Обновить фильм
-     * */
+     */
     public Film update(Film film) throws NotFoundException {
         Film updated = filmStorage.update(film);
         if (updated == null) {
@@ -67,7 +70,7 @@ public class FilmService {
 
     /**
      * Пользователь ставит лайк фильму
-     * */
+     */
     public void addLike(Integer filmId, Integer userId) throws NotFoundException {
         Film film = filmStorage.getById(filmId);
         if (film == null) {
@@ -87,7 +90,7 @@ public class FilmService {
 
     /**
      * Пользователь удаляет лайк
-     * */
+     */
     public void removeLike(Integer filmId, Integer userId) throws NotFoundException {
         Film film = filmStorage.getById(filmId);
         if (film == null) {

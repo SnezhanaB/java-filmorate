@@ -12,5 +12,5 @@ public interface AbstractStorage<T> {
 
     T getById(Integer id);
 
-    T delete(Integer id);
+    boolean delete(Integer id);
 }

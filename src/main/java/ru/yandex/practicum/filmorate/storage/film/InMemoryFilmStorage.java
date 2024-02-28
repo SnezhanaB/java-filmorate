@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Qualifier("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private static final Map<Integer, Film> films = new HashMap<>();
@@ -40,7 +42,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film delete(Integer id) {
-        return films.remove(id);
+    public boolean delete(Integer id) {
+        return films.remove(id) != null;
     }
 }
