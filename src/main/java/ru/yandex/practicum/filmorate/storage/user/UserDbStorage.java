@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
@@ -15,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Component
 @Qualifier("userDbStorage")
@@ -101,6 +103,50 @@ public class UserDbStorage implements UserStorage {
             // Если фильм не найден по id
             return false;
         }
+    }
+
+    @Override
+    public List<User> getFriends(int userId) {
+        String sql = "SELECT id, email, name, login, birthday " +
+                "FROM users " +
+                "WHERE id IN (" +
+                "SELECT friend_id FROM friends WHERE user_id = ?" +
+                ")";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), userId);
+    }
+
+    @Override
+    public void removeFriend(int userId, int friendId) throws NotFoundException {
+        jdbcTemplate.update("INSERT INTO friends (user_id, friend_id) VALUES (?, ?)", userId, friendId);
+        String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+        try {
+            jdbcTemplate.update(sqlQuery, userId, friendId);
+        } catch (DataAccessException error) {
+            // Если фильм не найден по id
+            throw new NotFoundException("Пользователь не найден");
+        }
+    }
+
+    @Override
+    public void addFriend(int userId, int friendId) throws NotFoundException {
+        try {
+            jdbcTemplate.update("INSERT INTO friends (user_id, friend_id) VALUES (?, ?)", userId, friendId);
+        } catch (DataAccessException error) {
+            // Если фильм не найден по id
+            throw new NotFoundException("Пользователь не найден");
+        }
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId, int otherId) throws NotFoundException {
+        String sql = "SELECT id, email, name, login, birthday " +
+                " FROM users " +
+                " WHERE id IN (" +
+                "SELECT friend_id FROM friends WHERE user_id = ?" +
+                ") AND id IN (" +
+                "SELECT friend_id FROM friends WHERE user_id = ?" +
+                ")";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeUser(rs), userId, otherId);
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
