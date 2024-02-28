@@ -76,6 +76,5 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void removeLike(Integer filmId, Integer userId) throws NotFoundException {
-        
     }
 }
