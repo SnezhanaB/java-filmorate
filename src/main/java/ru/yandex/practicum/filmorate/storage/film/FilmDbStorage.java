@@ -71,24 +71,28 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        String sql = "insert into films(id, name, description, release_date, duration, mpa_id) " +
-                "values (?, ?, ?, ?, ?, ?)";
+        String sql = "update films set name=?, description=?, release_date=?, duration=?, mpa_id=? where id=?";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
-            stmt.setInt(1, film.getId());
-            stmt.setString(2, film.getName());
-            stmt.setString(3, film.getDescription());
-            stmt.setDate(4, Date.valueOf(film.getReleaseDate()));
-            stmt.setInt(5, film.getDuration());
-            // По умолчанию mpa без возрастных ограничений
-            stmt.setInt(6, film.getMpa() == null ? 1 : film.getMpa().getId());
-            return stmt;
-        }, keyHolder);
-        if (keyHolder.getKey().intValue() == film.getId()) {
-            return film;
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
+                stmt.setString(1, film.getName());
+                stmt.setString(2, film.getDescription());
+                stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
+                stmt.setInt(4, film.getDuration());
+                // По умолчанию mpa без возрастных ограничений
+                stmt.setInt(5, film.getMpa() == null ? 1 : film.getMpa().getId());
+                stmt.setInt(6, film.getId());
+                return stmt;
+            }, keyHolder);
+            if (keyHolder.getKey().intValue() == film.getId()) {
+                return film;
+            }
+            return null;
+        } catch (DataAccessException | NullPointerException error) {
+            // Если пользователь не найден по id
+            return null;
         }
-        return null;
     }
 
     @Override

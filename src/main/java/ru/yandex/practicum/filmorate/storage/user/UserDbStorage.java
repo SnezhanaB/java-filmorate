@@ -55,24 +55,23 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
-        String sql = "insert into users(id, email, name, login, birthday) " +
-                "values (?, ?, ?, ?, ?)";
+        String sql = "UPDATE users set email=?, name=?, login=?, birthday=? WHERE id=?";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             jdbcTemplate.update(connection -> {
                 PreparedStatement stmt = connection.prepareStatement(sql, new String[]{"id"});
-                stmt.setInt(1, user.getId());
-                stmt.setString(2, user.getEmail());
-                stmt.setString(3, user.getName());
-                stmt.setString(4, user.getLogin());
-                stmt.setDate(5, Date.valueOf(user.getBirthday()));
+                stmt.setString(1, user.getEmail());
+                stmt.setString(2, user.getName());
+                stmt.setString(3, user.getLogin());
+                stmt.setDate(4, Date.valueOf(user.getBirthday()));
+                stmt.setInt(5, user.getId());
                 return stmt;
             }, keyHolder);
             if (keyHolder.getKey().intValue() == user.getId()) {
                 return user;
             }
             return null;
-        } catch (DataAccessException error) {
+        } catch (DataAccessException | NullPointerException error) {
             // Если пользователь не найден по id
             return null;
         }
