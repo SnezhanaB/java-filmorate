@@ -1,15 +1,39 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
+@Qualifier("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private static final Map<Integer, User> users = new HashMap<>();
+
+    @Override
+    public List<User> getFriends(int userId) {
+        return null;
+    }
+
+    @Override
+    public void removeFriend(int userId, int friendId) throws NotFoundException {
+
+    }
+
+    @Override
+    public void addFriend(int userId, int friendId) throws NotFoundException {
+
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId, int otherId) throws NotFoundException {
+        return null;
+    }
 
     @Override
     public Collection<User> getAll() {
@@ -39,7 +63,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User delete(Integer id) {
-        return users.remove(id);
+    public boolean delete(Integer id) {
+        return users.remove(id) != null;
     }
 }

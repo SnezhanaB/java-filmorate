@@ -8,7 +8,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -22,9 +24,23 @@ public class User {
     private String name;
     @BirthdayConstraint
     private LocalDate birthday;
-
     @JsonIgnore
     private Set<Integer> friends = new HashSet<>();
+    /**
+     * Статус для связи «дружба» между двумя пользователями
+     * неподтверждённая (false) — когда один пользователь отправил запрос на добавление другого пользователя в друзья,
+     * подтверждённая (true) — когда второй пользователь согласился на добавление.
+     */
+    @JsonIgnore
+    private Map<Integer, Boolean> status = new HashMap<>();
+
+    public User(Integer id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
 
     public void addFriend(int userId) {
         friends.add(userId);
